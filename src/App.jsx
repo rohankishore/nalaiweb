@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import InkRidges from './component/InkRidges'
 import DitherFooter from './component/DitherFooter'
-import PaperShaderBackground from './component/PaperShaderBackground'
+import ProfileCard from './component/ProfileCard'
 import './App.css'
 
 /* ── Countdown ───────────────────────────────────────────────── */
@@ -220,12 +220,12 @@ export default function App() {
   }
 
   const SPEAKERS = [
-    { name: 'To Be Announced', role: 'Chief Minister of Kerala', org: 'Government of Kerala', init: '🏛️', tba: true },
-    { name: 'To Be Announced', role: 'IT Minister', org: 'Government of Kerala', init: '💼', tba: true },
-    { name: 'Keynote Speaker', role: 'AI & Deep Tech', org: 'Industry Leader', init: '🤖' },
-    { name: 'Keynote Speaker', role: 'Startups & Innovation', org: 'Ecosystem Builder', init: '🚀' },
-    { name: 'Panel Speaker', role: 'Higher Education', org: 'Engineering College', init: '🎓' },
-    { name: 'Panel Speaker', role: 'Government AI Policy', org: 'Kerala IT Dept', init: '📋' },
+    { name: 'To Be Announced', role: 'Chief Minister of Kerala', org: 'Government of Kerala', image: 'https://randomuser.me/api/portraits/men/32.jpg', tba: true },
+    { name: 'To Be Announced', role: 'IT Minister', org: 'Government of Kerala', image: 'https://randomuser.me/api/portraits/women/44.jpg', tba: true },
+    { name: 'Keynote Speaker', role: 'AI & Deep Tech', org: 'Industry Leader', image: 'https://randomuser.me/api/portraits/men/75.jpg' },
+    { name: 'Keynote Speaker', role: 'Startups & Innovation', org: 'Ecosystem Builder', image: 'https://randomuser.me/api/portraits/women/68.jpg' },
+    { name: 'Panel Speaker', role: 'Higher Education', org: 'Engineering College', image: 'https://randomuser.me/api/portraits/men/46.jpg' },
+    { name: 'Panel Speaker', role: 'Government AI Policy', org: 'Kerala IT Dept', image: 'https://randomuser.me/api/portraits/women/65.jpg' },
   ]
 
   const AGENDA = [
@@ -366,15 +366,13 @@ export default function App() {
 
       {/* ── Navigation ── */}
       <nav className={`nav${navScrolled ? ' scrolled' : ' hero-hidden'}${footerActive ? ' footer-hidden' : ''}`} aria-label="Main navigation">
-        <a href="#hero" className="nav-logo" onClick={(e) => { e.preventDefault(); scrollTo('hero') }}>
-          <span className="dot" aria-hidden="true" />
-          NAL<span style={{ color: 'var(--teal)' }}>AI</span>&nbsp;2027
-        </a>
-        <div className={`nav-links${navOpen ? ' open' : ''}`}>
-          {[['about', 'About'], ['speakers', 'Speakers'], ['agenda', 'Agenda'], ['film', 'Film'], ['venue', 'Venue'], ['faq', 'FAQ']].map(([id, label]) => (
-            <a key={id} href={`#${id}`} onClick={(e) => { e.preventDefault(); scrollTo(id) }}>{label}</a>
-          ))}
-          <a href="#register" className="nav-cta" onClick={(e) => { e.preventDefault(); scrollTo('register') }}>Register Free →</a>
+        <div className="gooey-nav-shell">
+          <div className={`nav-links${navOpen ? ' open' : ''}`}>
+            {[['hero', 'Home'], ['about', 'About'], ['speakers', 'Speakers'], ['agenda', 'Agenda'], ['film', 'Film'], ['venue', 'Venue'], ['faq', 'FAQ']].map(([id, label]) => (
+              <a key={id} href={`#${id}`} className={activeSection === id ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollTo(id) }}>{label}</a>
+            ))}
+            <a href="#register" className="nav-cta" onClick={(e) => { e.preventDefault(); scrollTo('register') }}>Register Free →</a>
+          </div>
         </div>
         <button
           className={`nav-toggle${navOpen ? ' open' : ''}`}
@@ -460,8 +458,6 @@ export default function App() {
             Scroll
           </div>
         </section>
-
-        <PaperShaderBackground />
 
         {/* ── Marquee (Neo-Brutalist & Slanted) ── */}
         <div className="marquee-neo-section" aria-hidden="true">
@@ -707,7 +703,6 @@ export default function App() {
         {/* ── Speakers ── */}
         <section id="speakers" aria-labelledby="speakers-title">
           <div className="section">
-            <p className="section-label reveal">Speakers & Guests</p>
             <h2 id="speakers-title" className="section-title reveal">Voices shaping<br />the future</h2>
             <p className="section-sub reveal reveal-delay-1">
               Confirmed speakers and guests will be listed here. Speaker information including
@@ -715,15 +710,23 @@ export default function App() {
             </p>
             <div className="speakers-grid">
               {SPEAKERS.map((s, i) => (
-                <article className="speaker-card reveal" key={i} style={{ transitionDelay: `${i * 0.07}s` }}>
-                  <div className="speaker-avatar">{s.init}</div>
-                  {s.tba
-                    ? <p className="speaker-name" style={{ color: 'var(--text-3)', fontStyle: 'italic' }}>To Be Confirmed</p>
-                    : <p className="speaker-name">{s.name}</p>
-                  }
-                  <p className="speaker-role">{s.role}</p>
-                  <p className="speaker-org">{s.org}</p>
-                </article>
+                <div className="speaker-profile-wrap reveal" key={i} style={{ transitionDelay: `${i * 0.07}s` }}>
+                  <ProfileCard
+                    avatarUrl={s.image}
+                    name={s.tba ? 'To Be Confirmed' : s.name}
+                    title={s.role}
+                    handle={s.org}
+                    status={s.tba ? 'Details coming soon' : 'Speaker profile'}
+                    contactText=""
+                    theme="light"
+                    backdropColor="#f3f1ec"
+                    radius={18}
+                    holo={0.12}
+                    glare={0.18}
+                    parallax={4}
+                    tiltStrength={6}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -734,7 +737,6 @@ export default function App() {
         {/* ── Agenda ── */}
         <section id="agenda" aria-labelledby="agenda-title">
           <div className="section">
-            <p className="section-label reveal">Programme</p>
             <h2 id="agenda-title" className="section-title reveal">A day in the<br />life of NALAI</h2>
             <p className="section-sub reveal reveal-delay-1">
               The full agenda for 10 January 2027 — from inaugural ceremony through to valedictory.
@@ -764,7 +766,6 @@ export default function App() {
           </div>
 
           <div className="film-content">
-            <p className="section-label reveal">🎬 Short Film Contest</p>
             <h2 id="film-title" className="section-title reveal">Lights. Camera.<br /><em style={{ color: 'var(--teal)', fontStyle: 'italic' }}>AI.</em></h2>
             <p className="section-sub reveal reveal-delay-1">
               Got a story to tell about artificial intelligence? Submit your short film and compete
@@ -873,7 +874,6 @@ export default function App() {
         {/* ── AI Labs ── */}
         <section id="labs" aria-labelledby="labs-title">
           <div className="section">
-            <p className="section-label reveal">AI Labs & Partners</p>
             <h2 id="labs-title" className="section-title reveal">Building Kerala's<br />AI infrastructure</h2>
             <p className="section-sub reveal reveal-delay-1">
               NALAI 2027 will see the signing of AI Lab MoUs between TCS and engineering
@@ -897,7 +897,6 @@ export default function App() {
         {/* ── Register ── */}
         <section id="register" className="register-section" aria-labelledby="register-title">
           <div className="section">
-            <p className="section-label reveal" style={{ justifyContent: 'center' }}>Secure Your Spot</p>
             <h2 id="register-title" className="section-title reveal" style={{ textAlign: 'center' }}>
               Register for<br /><em style={{ color: 'var(--teal)', fontStyle: 'italic' }}>NALAI 2027</em>
             </h2>
@@ -1006,7 +1005,6 @@ export default function App() {
         {/* ── Venue ── */}
         <section id="venue" aria-labelledby="venue-title">
           <div className="section">
-            <p className="section-label reveal">Getting There</p>
             <h2 id="venue-title" className="section-title reveal">Venue & Travel</h2>
             <p className="section-sub reveal reveal-delay-1">
               NALAI 2027 will be held at TICC, Thiruvananthapuram (proposed), with the TCS
@@ -1047,7 +1045,6 @@ export default function App() {
         {/* ── FAQ ── */}
         <section id="faq" aria-labelledby="faq-title">
           <div className="section" style={{ textAlign: 'center' }}>
-            <p className="section-label reveal" style={{ justifyContent: 'center' }}>Got Questions?</p>
             <h2 id="faq-title" className="section-title reveal">Frequently Asked</h2>
             <div className="faq-list">
               {FAQS.map((faq, i) => (
