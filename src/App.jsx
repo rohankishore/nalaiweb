@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import InkRidges from './component/InkRidges'
 import DitherFooter from './component/DitherFooter'
+import PaperShaderBackground from './component/PaperShaderBackground'
 import './App.css'
 
 /* ── Countdown ───────────────────────────────────────────────── */
@@ -58,12 +59,26 @@ function FaqItem({ q, a }) {
   )
 }
 
+const PROGRESS_SECTIONS = [
+  ['hero', 'Intro'],
+  ['about', 'About'],
+  ['speakers', 'Speakers'],
+  ['agenda', 'Agenda'],
+  ['film', 'Film'],
+  ['labs', 'Labs'],
+  ['register', 'Register'],
+  ['venue', 'Venue'],
+  ['faq', 'FAQ'],
+  ['footer', 'End'],
+]
+
 /* ── Main App ────────────────────────────────────────────────── */
 export default function App() {
   const [preloaded, setPreloaded] = useState(false)
   const [pct, setPct] = useState(0)
   const [navScrolled, setNavScrolled] = useState(false)
   const [footerActive, setFooterActive] = useState(false)
+  const [activeSection, setActiveSection] = useState('hero')
   const [navOpen, setNavOpen] = useState(false)
   const [passActive, setPassActive] = useState(false)
   const [passData, setPassData] = useState(null)
@@ -148,6 +163,24 @@ export default function App() {
       { threshold: [0.45] },
     )
     observer.observe(footer)
+    return () => observer.disconnect()
+  }, [preloaded])
+
+  useEffect(() => {
+    if (!preloaded) return undefined
+    const targets = PROGRESS_SECTIONS
+      .map(([id]) => document.getElementById(id))
+      .filter(Boolean)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+        if (visible[0]?.target.id) setActiveSection(visible[0].target.id)
+      },
+      { threshold: [0.15, 0.35, 0.6], rootMargin: '-18% 0px -52% 0px' },
+    )
+    targets.forEach((target) => observer.observe(target))
     return () => observer.disconnect()
   }, [preloaded])
 
@@ -312,6 +345,25 @@ export default function App() {
       {/* Toast */}
       <div className={`toast${toastVisible ? ' show' : ''}`} aria-live="polite">{toast}</div>
 
+      <aside className={`progress-rail${footerActive ? ' footer-progress-hidden' : ''}`} aria-label="Page progress">
+        <div className="progress-rail-line" aria-hidden="true">
+          <span style={{ height: `${(PROGRESS_SECTIONS.findIndex(([id]) => id === activeSection) / (PROGRESS_SECTIONS.length - 1)) * 100}%` }} />
+        </div>
+        <div className="progress-rail-dots">
+          {PROGRESS_SECTIONS.map(([id, label], index) => (
+            <button
+              key={id}
+              className={`progress-dot${activeSection === id ? ' active' : ''}${index <= PROGRESS_SECTIONS.findIndex(([sectionId]) => sectionId === activeSection) ? ' passed' : ''}`}
+              onClick={() => scrollTo(id)}
+              aria-label={`Go to ${label}`}
+              aria-current={activeSection === id ? 'step' : undefined}
+            >
+              <span className="progress-dot-label">{label}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
       {/* ── Navigation ── */}
       <nav className={`nav${navScrolled ? ' scrolled' : ' hero-hidden'}${footerActive ? ' footer-hidden' : ''}`} aria-label="Main navigation">
         <a href="#hero" className="nav-logo" onClick={(e) => { e.preventDefault(); scrollTo('hero') }}>
@@ -344,20 +396,20 @@ export default function App() {
             seed={7}
             horizon={0.62}
             mist={0.9}
-            drift={0.05}
+            drift={0.7}
             parallax={0.03}
             paintIn={2400}
             sun
             sunPosition={[0.78, 0.74]}
             sunSize={0.07}
-            sunColor="#e45c3a"
+            sunColor="#e92f0e"
             moon={false}
-            scrollDepth={0.35}
+            scrollDepth={0.80}
             inkColor="#f4f1eb"
             grain={0.85}
             clouds={0.35}
-            glow={0.45}
-            birds={5}
+            glow={0.4}
+            birds={14}
             birdsEvery={14}
             dprCap={1.5}
             label="Animated sumi-e mountain landscape"
@@ -408,6 +460,8 @@ export default function App() {
             Scroll
           </div>
         </section>
+
+        <PaperShaderBackground />
 
         {/* ── Marquee (Neo-Brutalist & Slanted) ── */}
         <div className="marquee-neo-section" aria-hidden="true">
@@ -1009,7 +1063,7 @@ export default function App() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="footer" role="contentinfo">
+      <footer id="footer" className="footer" role="contentinfo">
         <div className="footer-content">
           <div className="footer-top">
           <div className="footer-brand">

@@ -3,13 +3,13 @@
    Design System: Tokens, Reset, Base Typography
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&display=swap');
 
 /* ---- Tokens ---- */
 :root {
-  --bg:        #f4f1eb;
-  --surface:   #ebe7df;
-  --surface2:  #ded9cf;
+  --bg:        #fbfaf7;
+  --surface:   #f3f1ec;
+  --surface2:  #e9e6df;
   --border:    rgba(25, 28, 27, 0.13);
   --border2:   rgba(25, 28, 27, 0.22);
 
@@ -28,6 +28,7 @@
   --sans:  'DM Sans', system-ui, sans-serif;
   --mono:  'DM Mono', monospace;
   --serif: 'DM Serif Display', Georgia, serif;
+  --display: 'Instrument Serif', 'DM Serif Display', Georgia, serif;
 
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
   --space-4: 16px; --space-5: 24px; --space-6: 32px;
@@ -140,6 +141,115 @@ input, textarea, select { font: inherit; }
   opacity: 0;
   pointer-events: none;
   transform: translateY(-100%);
+}
+
+.progress-rail {
+  position: fixed;
+  left: 22px;
+  top: 50%;
+  z-index: 480;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+  transition: opacity 0.35s ease;
+}
+
+.progress-rail.footer-progress-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.progress-rail-line {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: rgba(25, 28, 27, 0.15);
+  transform: translateX(-50%);
+}
+
+.progress-rail-line span {
+  display: block;
+  width: 1px;
+  background: var(--teal);
+  transition: height 0.5s var(--ease-out);
+}
+
+.progress-rail-dots {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.progress-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid rgba(25, 28, 27, 0.36);
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform 0.3s var(--ease-out), background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.progress-dot-label {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(251, 250, 247, 0.96);
+  color: var(--text-1);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-4px, -50%);
+  transition: opacity 0.2s ease, transform 0.2s var(--ease-out);
+  box-shadow: 0 8px 18px rgba(23, 27, 43, 0.08);
+}
+
+.progress-dot:hover .progress-dot-label,
+.progress-dot:focus-visible .progress-dot-label {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.progress-dot:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 4px;
+}
+
+.progress-dot:hover,
+.progress-dot.active {
+  border-color: var(--teal);
+  background: var(--teal);
+}
+
+.progress-dot.active {
+  transform: scale(1.7);
+  box-shadow: 0 0 0 4px var(--teal-dim);
+}
+
+.progress-dot.passed:not(.active) {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+@media (max-width: 700px) {
+  .progress-rail {
+    left: 10px;
+    transform: translateY(-50%) scale(0.82);
+    transform-origin: left center;
+  }
 }
 .nav.scrolled {
   background: rgba(6,7,16,0.85); backdrop-filter: blur(20px);
@@ -984,9 +1094,11 @@ input, textarea, select { font: inherit; }
 .dither-footer-canvas {
   display: block;
   position: absolute;
-  inset: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 58%;
   margin: 0;
   image-rendering: pixelated;
   mix-blend-mode: multiply;
@@ -1012,7 +1124,7 @@ input, textarea, select { font: inherit; }
 @media (max-width: 768px) {
   .dither-footer-canvas {
     width: 100%;
-    height: 100%;
+    height: 58%;
   }
 }
 
@@ -1260,8 +1372,8 @@ input, textarea, select { font: inherit; }
    ============================================================ */
 :root {
   --ink: #171b2b;
-  --paper: #f4f1eb;
-  --paper-deep: #ebe7df;
+  --paper: #fbfaf7;
+  --paper-deep: #f3f1ec;
   --line: rgba(25, 28, 27, 0.14);
 }
 
@@ -1275,7 +1387,7 @@ body {
 }
 
 .nav.scrolled {
-  background: rgba(244, 241, 235, 0.88);
+  background: rgba(251, 250, 247, 0.9);
   border-bottom-color: var(--line);
   box-shadow: 0 8px 30px rgba(23, 27, 43, 0.06);
 }
@@ -1314,7 +1426,7 @@ body {
   z-index: 0;
   width: 100%;
   height: 100%;
-  color: #f4f1eb;
+  color: #fbfaf7;
   background: #171b2b;
 }
 
@@ -1423,12 +1535,51 @@ body {
 }
 
 .section-title {
-  font-size: clamp(42px, 5vw, 72px);
-  line-height: 0.98;
+  font-family: var(--display);
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 0.9;
+  font-weight: 400;
 }
 
 .section-sub {
   color: #68706a;
+}
+
+main {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+
+.post-hero-shader {
+  position: absolute;
+  top: max(820px, 100svh);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.post-hero-shader ~ * {
+  position: relative;
+  z-index: 1;
+}
+
+/* A quiet paper grain carries the editorial material language below the hero. */
+main > section:not(#hero),
+main > .marquee-neo-section {
+  background-color: rgba(251, 250, 247, 0.9);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='paper-grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-grain)' opacity='.16'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.38), transparent 42%);
+  background-size: 180px 180px, 100% 100%;
+}
+
+.marquee-neo-section {
+  background-color: rgba(251, 250, 247, 0.9);
 }
 
 .glass,
@@ -1462,7 +1613,51 @@ body {
 .about-section,
 .film-section,
 .register-section {
-  background: var(--paper);
+  background: rgba(251, 250, 247, 0.9);
+}
+
+main > section:not(#hero) .section-title,
+main > section:not(#hero) .section-sub,
+main > section:not(#hero) .about-lead-copy,
+main > section:not(#hero) .about-sub-copy,
+main > section:not(#hero) .faq-question,
+main > section:not(#hero) .form-label,
+main > section:not(#hero) .form-privacy {
+  color: var(--text-1);
+}
+
+main > section:not(#hero) .section-title {
+  color: var(--text-1);
+}
+
+main > section:not(#hero) .about-hero-title {
+  color: var(--text-1);
+}
+
+main > section:not(#hero) .about-hero-title .text-gradient {
+  color: #6479b4;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+main > section:not(#hero) .about-hero-title em {
+  color: var(--teal);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.about-hero-title,
+.about-hero-title .text-gradient,
+.about-hero-title em {
+  font-family: var(--display);
+  font-weight: 400;
+}
+
+main > section:not(#hero) .about-header-meta .meta-coord,
+main > section:not(#hero) .speaker-org,
+main > section:not(#hero) .lab-type,
+main > section:not(#hero) .venue-info-item .value {
+  color: var(--text-2);
 }
 
 .about-nexus-console {
@@ -1536,7 +1731,7 @@ body {
 
 @media (max-width: 768px) {
   .nav-links.open {
-    background: rgba(244, 241, 235, 0.98);
+    background: rgba(251, 250, 247, 0.98);
   }
 
   .nav-links.open a {
